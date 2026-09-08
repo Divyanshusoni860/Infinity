@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finqy — Car Refinance</title>
+<meta name="theme-color" content="#4338CA" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="brand">
+      <a href="/" class="back-link" aria-label="Back to all tools">←</a>
+      <div class="brand-mark">F</div>
+      <div>
+        <div class="brand-name">Finqy</div>
+        <div class="brand-sub">Car Refinance (Loan-Closed Vehicle)</div>
+      </div>
+    </div>
+    <div class="tabbar">
+      <button class="tabbtn active" id="tabBtnCalc" onclick="switchTab('calc')">Check Eligibility</button>
+      <button class="tabbtn" id="tabBtnLenders" onclick="switchTab('lenders')">Lenders</button>
+      <button class="tabbtn" id="tabBtnHistory" onclick="switchTab('history')">History</button>
+    </div>
+  </div>
+
+  <div class="body-with-rail">
+  <div class="body-main">
+
+  <!-- ================= CHECK ELIGIBILITY ================= -->
+  <div class="panel active" id="panelCalc">
+    <div id="calcStatus"></div>
+    <div class="status-banner info" style="margin-bottom:14px;">
+      For a vehicle with <b>no existing loan</b> (fully owned / loan already closed). Lender advances a fresh loan against the vehicle's current valuation.
+    </div>
+    <div class="layout-2col">
+      <div>
+        <div class="card" id="calcForm">
+          <h2>Applicant &amp; vehicle details</h2>
+          <div class="grid2">
+            <div class="field"><label>CIBIL score</label><input type="number" id="in_cibil" value="730"></div>
+            <div class="field"><label>Vehicle valuation (₹)</label><input type="number" id="in_valuation" value="1200000"></div>
+            <div class="field"><label>Serial owner</label>
+              <select id="in_owner"><option value="1">1st owner</option><option value="2">2nd owner</option><option value="3">3rd owner</option></select>
+            </div>
+            <div class="field"><label>Applicant age</label><input type="number" id="in_age" value="38"></div>
+            <div class="field"><label>Employment type</label>
+              <select id="in_employment"><option value="salaried">Salaried</option><option value="senp">Self-employed</option></select>
+            </div>
+            <div class="field"><label>FOIR met?</label>
+              <select id="in_foirMet"><option value="yes">Yes</option><option value="no">No</option></select>
+            </div>
+            <div class="field"><label>Avg. bank balance (× EMI)</label><input type="number" step="0.1" id="in_abbMultiple" value="1"></div>
+            <div class="field"><label>Residence</label>
+              <select id="in_resi"><option value="owned">Owned</option><option value="rented">Rented</option></select>
+            </div>
+            <div class="field"><label>ITR available?</label>
+              <select id="in_itr"><option value="yes">Yes</option><option value="no">No</option></select>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="runCheck()">Check refinance eligibility</button>
+        </div>
+      </div>
+      <div>
+        <div id="resultsContainer">
+          <div class="empty-state">Fill in the details and run a check to see ranked refinance offers here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LENDERS ================= -->
+  <div class="panel" id="panelLenders">
+    <div id="lendersStatus"></div>
+    <div class="lenders-top">
+      <div style="font-size:14px;font-weight:700;">Refinance lender policies (<span id="lenderCount">0</span>)</div>
+      <div class="lenders-top-actions">
+        <button class="reset-lender-btn" onclick="resetLenders()">↺ Reset to defaults</button>
+        <button class="add-lender-btn" onclick="addLender()">+ Add lender</button>
+      </div>
+    </div>
+    <div id="lendersList"></div>
+  </div>
+
+  <!-- ================= HISTORY ================= -->
+  <div class="panel" id="panelHistory">
+    <div class="lenders-top">
+      <div style="font-size:14px;font-weight:700;">Recent checks</div>
+      <button class="clear-history-btn" onclick="clearHistory()">Clear history</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  </div>
+  <aside class="tools-rail">
+    <div class="tools-rail-title">Handy tools</div>
+    <a class="tools-rail-item" href="/bt-topup"><span class="ic">🚗</span><span>Car Loan BT Top-Up</span></a>
+    <a class="tools-rail-item active" href="/refinance"><span class="ic">🔁</span><span>Car Refinance</span></a>
+    <a class="tools-rail-item" href="/emi-calculator"><span class="ic">🧮</span><span>EMI Calculator</span></a>
+    <a class="tools-rail-item" href="/"><span class="ic">🏠</span><span>All tools</span></a>
+  </aside>
+  </div>
+
+</div>
+
+<script src="/refinance.js"></script>
+</body>
+</html>

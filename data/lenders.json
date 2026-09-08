@@ -1,0 +1,748 @@
+[
+  {
+    "id": "tata-capital",
+    "name": "Tata Capital",
+    "calcBasis": "emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.2
+      },
+      {
+        "id": "t2",
+        "minCibil": 700,
+        "minTenor": 12,
+        "multiplier": 1.3
+      },
+      {
+        "id": "t3",
+        "minCibil": 700,
+        "minTenor": 18,
+        "multiplier": 1.4
+      },
+      {
+        "id": "t4",
+        "minCibil": 700,
+        "minTenor": 24,
+        "multiplier": 1.45
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 58,
+    "ageSenpMin": 21,
+    "ageSenpMax": 58,
+    "minTenorServed": 10,
+    "loanCapping": 3000000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 16,
+    "pf": 1,
+    "notes": "Not available for 3rd owner onward.",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "hero-emi",
+    "name": "Hero FinCorp (EMI Multiplier)",
+    "calcBasis": "emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 12,
+        "multiplier": 1.3
+      },
+      {
+        "id": "t2",
+        "minCibil": 700,
+        "minTenor": 18,
+        "multiplier": 1.4
+      },
+      {
+        "id": "t3",
+        "minCibil": 700,
+        "minTenor": 24,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 58,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 12,
+    "loanCapping": 1500000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 0,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 17.5,
+    "pf": 1,
+    "notes": "Nil bounce in last 6 months, max 1 in 12 months.",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "hero-star",
+    "name": "Hero STAR",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 2.0
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 12,
+    "loanCapping": 2500000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 17,
+    "pf": 1,
+    "notes": "Top-up capped at 2x current EMI (enforced).",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": 2
+  },
+  {
+    "id": "axis-nip",
+    "name": "Axis Finance (NIP)",
+    "calcBasis": "emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.3
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 10,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 15.5,
+    "pf": 1,
+    "notes": "Only 1st owner accepted.",
+    "category": "bt",
+    "maxTopupCap": 5000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "axis-ip-foir-met",
+    "name": "Axis Finance IP (FOIR Met)",
+    "calcBasis": "emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 12,
+        "multiplier": 1.6
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 10,
+    "loanCapping": 0,
+    "requiresFoirMet": true,
+    "minABBMultiple": 0,
+    "requiresOwnedResi": true,
+    "requiresITR": true,
+    "irrRate": 15.65,
+    "pf": 1,
+    "notes": "Only 1st owner accepted.",
+    "category": "bt",
+    "maxTopupCap": 5000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "axis-ip-foir-not-met",
+    "name": "Axis Finance IP (FOIR Not Met)",
+    "calcBasis": "emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 12,
+        "multiplier": 1.6
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 10,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1.5,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 16.2,
+    "pf": 1,
+    "notes": "Fallback path when FOIR isn't met - needs a stronger average bank balance instead.",
+    "category": "bt",
+    "maxTopupCap": 5000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "axis-ml-foir-met",
+    "name": "Axis ML 150% (FOIR Met)",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 10,
+    "loanCapping": 0,
+    "requiresFoirMet": true,
+    "minABBMultiple": 0,
+    "requiresOwnedResi": true,
+    "requiresITR": true,
+    "irrRate": 15.65,
+    "pf": 1,
+    "notes": "",
+    "category": "bt",
+    "maxTopupCap": 5000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "axis-ml-no-foir",
+    "name": "Axis ML 150% (No FOIR)",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 10,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1.5,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 16,
+    "pf": 1,
+    "notes": "",
+    "category": "bt",
+    "maxTopupCap": 5000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "au-sfb",
+    "name": "AU Small Finance Bank",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 12,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 3,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 12,
+    "loanCapping": 2000000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 0,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 15,
+    "pf": 1,
+    "notes": "Hard cap of Rs 20,00,000 regardless of formula.",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "idfc-platinum",
+    "name": "IDFC First - Platinum",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 765,
+        "minTenor": 9,
+        "multiplier": 1.4
+      },
+      {
+        "id": "t2",
+        "minCibil": 765,
+        "minTenor": 18,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 10,
+    "loanCapping": 3000000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 0.5,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 16.51,
+    "pf": 1,
+    "notes": "CIBIL 765+ tier.",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "idfc-gold",
+    "name": "IDFC First - Gold",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 725,
+        "minTenor": 9,
+        "multiplier": 1.4
+      },
+      {
+        "id": "t2",
+        "minCibil": 725,
+        "minTenor": 18,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 10,
+    "loanCapping": 3000000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 0.75,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 16.8,
+    "pf": 1,
+    "notes": "CIBIL 725-764 tier.",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "idfc-silver",
+    "name": "IDFC First - Silver",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.25
+      },
+      {
+        "id": "t2",
+        "minCibil": 700,
+        "minTenor": 18,
+        "multiplier": 1.4
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 10,
+    "loanCapping": 3000000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 17.2,
+    "pf": 1,
+    "notes": "CIBIL 700-724 tier.",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "hdfc-emi",
+    "name": "HDFC (EMI Multiplier)",
+    "calcBasis": "emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.2
+      },
+      {
+        "id": "t2",
+        "minCibil": 750,
+        "minTenor": 9,
+        "multiplier": 1.3
+      },
+      {
+        "id": "t3",
+        "minCibil": 765,
+        "minTenor": 9,
+        "multiplier": 1.4
+      },
+      {
+        "id": "t4",
+        "minCibil": 780,
+        "minTenor": 9,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 10,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 14,
+    "pf": 1,
+    "notes": "Only 1st owner accepted.",
+    "category": "bt",
+    "maxTopupCap": 3500000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "hdfc-under-15l",
+    "name": "HDFC (Under Rs 15 Lakh)",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.2
+      },
+      {
+        "id": "t2",
+        "minCibil": 750,
+        "minTenor": 9,
+        "multiplier": 1.4
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 23,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 23,
+    "ageSenpMax": 65,
+    "minTenorServed": 10,
+    "loanCapping": 1500000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": false,
+    "requiresITR": false,
+    "irrRate": 15,
+    "pf": 1,
+    "notes": "Multiplier runs ~20% lower if residence isn't owned.",
+    "category": "bt",
+    "maxTopupCap": 1000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "piramal",
+    "name": "Piramal Finance",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.25
+      },
+      {
+        "id": "t2",
+        "minCibil": 700,
+        "minTenor": 24,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 25,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 25,
+    "ageSenpMax": 65,
+    "minTenorServed": 10,
+    "loanCapping": 1500000,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 15.65,
+    "pf": 1,
+    "notes": "",
+    "category": "bt",
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "icici",
+    "name": "ICICI Bank",
+    "calcBasis": "valuation",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 9,
+        "multiplier": 1.3
+      },
+      {
+        "id": "t2",
+        "minCibil": 700,
+        "minTenor": 18,
+        "multiplier": 1.4
+      },
+      {
+        "id": "t3",
+        "minCibil": 700,
+        "minTenor": 24,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 25,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 25,
+    "ageSenpMax": 65,
+    "minTenorServed": 12,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": false,
+    "requiresITR": false,
+    "irrRate": 14.5,
+    "pf": 1,
+    "notes": "",
+    "category": "bt",
+    "maxTopupCap": 3000000,
+    "maxTopupMultipleOfEMI": null
+  },
+  {
+    "id": "icici-max-refinance",
+    "name": "ICICI Max Refinance",
+    "calcBasis": "valuation",
+    "category": "refinance",
+    "baseLenderId": "icici",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 0,
+        "multiplier": 1.4
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 25,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 25,
+    "ageSenpMax": 65,
+    "minTenorServed": 0,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": false,
+    "requiresITR": false,
+    "irrRate": 14.5,
+    "pf": 1,
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null,
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 140% of valuation. One-time facility. Cloned from ICICI Bank BT policy."
+  },
+  {
+    "id": "axis-max-refinance",
+    "name": "Axis Max Refinance",
+    "calcBasis": "valuation",
+    "category": "refinance",
+    "baseLenderId": "axis-ip-foir-met",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 0,
+        "multiplier": 1.2
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 21,
+    "ageSenpMax": 60,
+    "minTenorServed": 0,
+    "loanCapping": 0,
+    "requiresFoirMet": true,
+    "minABBMultiple": 0,
+    "requiresOwnedResi": true,
+    "requiresITR": true,
+    "irrRate": 15.65,
+    "pf": 1,
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null,
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 120% of valuation. One-time facility. Cloned from Axis Finance IP (FOIR Met) BT policy."
+  },
+  {
+    "id": "piramal-max-refinance",
+    "name": "Piramal Max Refinance",
+    "calcBasis": "valuation",
+    "category": "refinance",
+    "baseLenderId": "piramal",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 0,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 1,
+    "ageSalariedMin": 25,
+    "ageSalariedMax": 60,
+    "ageSenpMin": 25,
+    "ageSenpMax": 65,
+    "minTenorServed": 0,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 15.65,
+    "pf": 1,
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null,
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 150% of valuation. 1st owner only. One-time facility. Cloned from Piramal Finance BT policy."
+  },
+  {
+    "id": "hero-max",
+    "name": "Hero Max",
+    "calcBasis": "valuation",
+    "category": "refinance",
+    "baseLenderId": "hero-emi",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 0,
+        "multiplier": 1.75
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 58,
+    "ageSenpMin": 21,
+    "ageSenpMax": 65,
+    "minTenorServed": 0,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 0,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 17.5,
+    "pf": 1,
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null,
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle. Sheet lists 150-200% of valuation; using the 175% midpoint. One-time facility. Cloned from Hero FinCorp (EMI Multiplier) BT policy."
+  },
+  {
+    "id": "tata-max-refinance",
+    "name": "TATA Max Refinance",
+    "calcBasis": "valuation",
+    "category": "refinance",
+    "baseLenderId": "tata-capital",
+    "tiers": [
+      {
+        "id": "t1",
+        "minCibil": 700,
+        "minTenor": 0,
+        "multiplier": 1.5
+      }
+    ],
+    "minOwner": 1,
+    "maxOwner": 2,
+    "ageSalariedMin": 21,
+    "ageSalariedMax": 58,
+    "ageSenpMin": 21,
+    "ageSenpMax": 58,
+    "minTenorServed": 0,
+    "loanCapping": 0,
+    "requiresFoirMet": null,
+    "minABBMultiple": 1,
+    "requiresOwnedResi": true,
+    "requiresITR": false,
+    "irrRate": 16,
+    "pf": 1,
+    "maxTopupCap": 0,
+    "maxTopupMultipleOfEMI": null,
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 150% of valuation. One-time facility. Cloned from Tata Capital BT policy."
+  }
+]

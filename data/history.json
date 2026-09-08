@@ -1,0 +1,157 @@
+[
+  {
+    "id": "h_mtsj7s1c_paag",
+    "type": "bt",
+    "timestamp": "2026-09-08T10:33:46.416Z",
+    "input": {
+      "cibil": 730,
+      "tenorServed": 18,
+      "currentEMI": 46109,
+      "valuation": 1523000,
+      "closureAmount": 1025000,
+      "owner": 1,
+      "age": 38,
+      "employment": "senp",
+      "foirMet": true,
+      "abbMultiple": 0.75,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 5,
+    "ineligibleCount": 11,
+    "bestLender": "Axis ML 150% (FOIR Met)",
+    "bestTopup": 1259500
+  },
+  {
+    "id": "h_mtsj5okz_0bgb",
+    "type": "refinance",
+    "timestamp": "2026-09-08T10:32:08.627Z",
+    "input": {
+      "cibil": 730,
+      "valuation": 1200000,
+      "owner": 1,
+      "age": 38,
+      "employment": "senp",
+      "foirMet": true,
+      "abbMultiple": 1,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 5,
+    "ineligibleCount": 0,
+    "bestLender": "Hero Max",
+    "bestLoanAmount": 2100000
+  },
+  {
+    "id": "h_mtsj4dfr_gqq8",
+    "type": "bt",
+    "timestamp": "2026-09-08T10:31:07.527Z",
+    "input": {
+      "cibil": 704,
+      "tenorServed": 25,
+      "currentEMI": 30000,
+      "valuation": 1000000,
+      "closureAmount": 900000,
+      "owner": 1,
+      "age": 38,
+      "employment": "senp",
+      "foirMet": true,
+      "abbMultiple": 0.5,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 4,
+    "ineligibleCount": 12,
+    "bestLender": "AU Small Finance Bank",
+    "bestTopup": 600000
+  },
+  {
+    "id": "h_mtsj1uav_eg1c",
+    "type": "bt",
+    "timestamp": "2026-09-08T10:29:09.415Z",
+    "input": {
+      "cibil": 704,
+      "tenorServed": 25,
+      "currentEMI": 30000,
+      "valuation": 1000000,
+      "closureAmount": 900000,
+      "owner": 1,
+      "age": 38,
+      "employment": "senp",
+      "foirMet": true,
+      "abbMultiple": 1,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 12,
+    "ineligibleCount": 4,
+    "bestLender": "ICICI Bank",
+    "bestTopup": 600000
+  },
+  {
+    "id": "h_mtsixn51_ydey",
+    "type": "bt",
+    "timestamp": "2026-09-08T10:25:53.509Z",
+    "input": {
+      "cibil": 730,
+      "tenorServed": 13,
+      "currentEMI": 46109,
+      "valuation": 500000,
+      "closureAmount": 100000,
+      "owner": 1,
+      "age": 38,
+      "employment": "salaried",
+      "foirMet": true,
+      "abbMultiple": 1.5,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 15,
+    "ineligibleCount": 1,
+    "bestLender": "Axis Finance IP (FOIR Met)",
+    "bestTopup": 859067.2000000001
+  },
+  {
+    "id": "h_mtsiw5lo_bv9d",
+    "type": "bt",
+    "timestamp": "2026-09-08T10:24:44.124Z",
+    "input": {
+      "cibil": 730,
+      "tenorServed": 13,
+      "currentEMI": 46109,
+      "valuation": 1523000,
+      "closureAmount": 1025000,
+      "owner": 1,
+      "age": 38,
+      "employment": "salaried",
+      "foirMet": true,
+      "abbMultiple": 1.5,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 15,
+    "ineligibleCount": 1,
+    "bestLender": "Axis ML 150% (FOIR Met)",
+    "bestTopup": 1259500
+  },
+  {
+    "id": "h_mtsivrde_o3z0",
+    "type": "refinance",
+    "timestamp": "2026-09-08T10:24:25.682Z",
+    "input": {
+      "cibil": 730,
+      "valuation": 1200000,
+      "owner": 1,
+      "age": 38,
+      "employment": "salaried",
+      "foirMet": true,
+      "abbMultiple": 1,
+      "resi": "owned",
+      "itr": true
+    },
+    "eligibleCount": 5,
+    "ineligibleCount": 0,
+    "bestLender": "Hero Max",
+    "bestLoanAmount": 2100000
+  }
+]

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Infinity — Loan Tools</title>
+<meta name="theme-color" content="#4338CA" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-mark">I</div>
+      <div>
+        <div class="brand-name">Infinity</div>
+        <div class="brand-sub">Loan tools, all in one place</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel active" style="padding:24px;">
+    <div class="section-title" style="margin-bottom:16px;">Choose a tool</div>
+
+    <div class="tool-grid">
+
+      <a class="tool-card" href="/bt-topup">
+        <div class="tool-icon">🚗</div>
+        <div class="tool-badge ready">Ready</div>
+        <div class="tool-name">Car Loan BT Top-Up</div>
+        <div class="tool-desc">Check balance-transfer + top-up eligibility across 16 lenders, ranked by best offer.</div>
+      </a>
+
+      <a class="tool-card" href="/refinance">
+        <div class="tool-icon">🔁</div>
+        <div class="tool-badge ready">Ready</div>
+        <div class="tool-name">Car Refinance</div>
+        <div class="tool-desc">For a fully-owned vehicle with no existing loan — check refinance eligibility against 5 lenders, ranked by best loan amount.</div>
+      </a>
+
+      <a class="tool-card" href="/emi-calculator">
+        <div class="tool-icon">🧮</div>
+        <div class="tool-badge ready">Ready</div>
+        <div class="tool-name">EMI Calculator</div>
+        <div class="tool-desc">Work out monthly EMI, total interest, and total payout for any loan amount and tenure.</div>
+      </a>
+
+      <div class="tool-card disabled" data-tool="Home Loan BT Top-Up">
+        <div class="tool-icon">🏠</div>
+        <div class="tool-badge soon">Coming soon</div>
+        <div class="tool-name">Home Loan BT Top-Up</div>
+        <div class="tool-desc">Same idea as the car loan tool, tuned for home loan balance transfer policies.</div>
+      </div>
+
+      <div class="tool-card disabled" data-tool="Personal Loan Eligibility">
+        <div class="tool-icon">💳</div>
+        <div class="tool-badge soon">Coming soon</div>
+        <div class="tool-name">Personal Loan Eligibility</div>
+        <div class="tool-desc">Compare personal loan offers across lenders based on income and credit profile.</div>
+      </div>
+
+      <div class="tool-card disabled" data-tool="Business Loan Eligibility">
+        <div class="tool-icon">🏢</div>
+        <div class="tool-badge soon">Coming soon</div>
+        <div class="tool-name">Business Loan Eligibility</div>
+        <div class="tool-desc">Eligibility and offer comparison for business / working-capital loans.</div>
+      </div>
+
+      <div class="tool-card disabled" data-tool="Loan Against Property">
+        <div class="tool-icon">📄</div>
+        <div class="tool-badge soon">Coming soon</div>
+        <div class="tool-name">Loan Against Property</div>
+        <div class="tool-desc">LAP eligibility and top-up comparison across lender policies.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="/home.js"></script>
+</body>
+</html>
