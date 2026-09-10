@@ -1,0 +1,14 @@
+{
+  "name": "finqy-bt-topup-advisor",
+  "version": "1.0.0",
+  "description": "Finqy - Car loan Balance Transfer + Top-Up eligibility advisor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

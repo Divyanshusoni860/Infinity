@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finqy — BT Top-Up Advisor</title>
+<meta name="theme-color" content="#4338CA" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="brand">
+      <a href="/" class="back-link" aria-label="Back to all tools">←</a>
+      <div class="brand-mark">F</div>
+      <div>
+        <div class="brand-name">Finqy</div>
+        <div class="brand-sub">Car Loan BT Top-Up Advisor</div>
+      </div>
+    </div>
+    <div class="tabbar">
+      <button class="tabbtn active" id="tabBtnCalc" onclick="switchTab('calc')">Check Eligibility</button>
+      <button class="tabbtn" id="tabBtnLenders" onclick="switchTab('lenders')">Lenders</button>
+      <button class="tabbtn" id="tabBtnHistory" onclick="switchTab('history')">History</button>
+    </div>
+  </div>
+
+  <div class="body-with-rail">
+  <div class="body-main">
+
+  <!-- ================= CHECK ELIGIBILITY ================= -->
+  <div class="panel active" id="panelCalc">
+    <div id="calcStatus"></div>
+    <div class="layout-2col">
+      <div>
+        <div class="card" id="calcForm">
+          <h2>Applicant &amp; vehicle details</h2>
+          <div id="calcApplicantSummary"></div>
+          <div class="grid2" id="calcFormFields"></div>
+          <button class="btn-primary" onclick="runCheck()">Check eligibility across lenders</button>
+        </div>
+      </div>
+      <div>
+        <div id="resultsContainer">
+          <div class="empty-state">Fill in the details and run a check to see ranked lender offers here.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LENDERS ================= -->
+  <div class="panel" id="panelLenders">
+    <div id="lendersStatus"></div>
+    <div class="lenders-top">
+      <div style="font-size:14px;font-weight:700;">Lender policies (<span id="lenderCount">0</span>)</div>
+      <div class="lenders-top-actions">
+        <button class="reset-lender-btn" onclick="resetLenders()">↺ Reset to defaults</button>
+        <button class="add-lender-btn" onclick="addLender()">+ Add lender</button>
+      </div>
+    </div>
+    <div id="lendersList"></div>
+  </div>
+
+  <!-- ================= HISTORY ================= -->
+  <div class="panel" id="panelHistory">
+    <div class="lenders-top">
+      <div style="font-size:14px;font-weight:700;">Recent checks</div>
+      <button class="clear-history-btn" onclick="clearHistory()">Clear history</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  </div>
+  <aside class="tools-rail">
+    <div class="tools-rail-title">Handy tools</div>
+    <a class="tools-rail-item active" href="/bt-topup"><span class="ic">🚗</span><span>Car Loan BT Top-Up</span></a>
+    <a class="tools-rail-item" href="/refinance"><span class="ic">🔁</span><span>Car Refinance</span></a>
+    <a class="tools-rail-item" href="/emi-calculator"><span class="ic">🧮</span><span>EMI Calculator</span></a>
+    <a class="tools-rail-item" href="/"><span class="ic">🏠</span><span>All tools</span></a>
+  </aside>
+  </div>
+
+</div>
+
+<script src="/bt-topup.js"></script>
+</body>
+</html>

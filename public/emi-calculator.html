@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finqy — EMI Calculator</title>
+<meta name="theme-color" content="#4338CA" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="brand">
+      <a href="/" class="back-link" aria-label="Back to all tools">←</a>
+      <div class="brand-mark">F</div>
+      <div>
+        <div class="brand-name">Finqy</div>
+        <div class="brand-sub">EMI Calculator</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body-with-rail">
+  <div class="body-main">
+  <div class="panel active">
+    <div class="layout-2col">
+      <div>
+        <div class="card">
+          <h2>Loan details</h2>
+          <div class="field" style="margin-bottom:14px;">
+            <label>Loan amount (₹)</label>
+            <input type="number" id="emi_principal" value="1500000" oninput="computeEMI()">
+          </div>
+          <div class="field" style="margin-bottom:14px;">
+            <label>Interest rate (% per annum)</label>
+            <input type="number" step="0.01" id="emi_rate" value="9.5" oninput="computeEMI()">
+          </div>
+          <div class="field" style="margin-bottom:6px;">
+            <label>Loan tenure</label>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <input type="number" id="emi_tenure" value="5" oninput="computeEMI()">
+              <span class="hint">Number</span>
+            </div>
+            <div class="field">
+              <select id="emi_tenure_unit" onchange="computeEMI()">
+                <option value="years">Years</option>
+                <option value="months">Months</option>
+              </select>
+              <span class="hint">Unit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Result</h2>
+          <div class="rc-stats" style="grid-template-columns:1fr;">
+            <div class="rc-stat">
+              <div class="l">Monthly EMI</div>
+              <div class="v" id="emi_result_emi" style="font-size:22px;">—</div>
+            </div>
+          </div>
+          <div class="rc-stats" style="margin-top:10px;">
+            <div class="rc-stat">
+              <div class="l">Total interest payable</div>
+              <div class="v" id="emi_result_interest">—</div>
+            </div>
+            <div class="rc-stat">
+              <div class="l">Total payment (principal + interest)</div>
+              <div class="v" id="emi_result_total">—</div>
+            </div>
+          </div>
+
+          <div class="emi-bar" style="margin-top:16px;">
+            <div class="emi-bar-fill principal" id="emi_bar_principal"></div>
+            <div class="emi-bar-fill interest" id="emi_bar_interest"></div>
+          </div>
+          <div class="emi-legend">
+            <span><i class="dot principal"></i> Principal <b id="emi_pct_principal">—</b></span>
+            <span><i class="dot interest"></i> Interest <b id="emi_pct_interest">—</b></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>How this is calculated</h2>
+          <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0;">
+            EMI = P × r × (1+r)<sup>n</sup> ÷ [(1+r)<sup>n</sup> − 1]<br>
+            where <b>P</b> = loan amount, <b>r</b> = monthly interest rate (annual rate ÷ 12 ÷ 100),
+            and <b>n</b> = number of monthly instalments.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <aside class="tools-rail">
+    <div class="tools-rail-title">Handy tools</div>
+    <a class="tools-rail-item" href="/bt-topup"><span class="ic">🚗</span><span>Car Loan BT Top-Up</span></a>
+    <a class="tools-rail-item" href="/refinance"><span class="ic">🔁</span><span>Car Refinance</span></a>
+    <a class="tools-rail-item active" href="/emi-calculator"><span class="ic">🧮</span><span>EMI Calculator</span></a>
+    <a class="tools-rail-item" href="/"><span class="ic">🏠</span><span>All tools</span></a>
+  </aside>
+  </div>
+
+</div>
+
+<script src="/emi-calculator.js"></script>
+</body>
+</html>
