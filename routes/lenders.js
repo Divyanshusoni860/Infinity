@@ -14,6 +14,7 @@ function emptyLender(overrides = {}) {
     name: "New Lender",
     calcBasis: "emi",
     category: "bt", // "bt" (balance transfer + top-up) or "refinance" (loan-closed vehicle)
+    logoUrl: "", // data-URL of an uploaded logo; blank = fall back to a letter badge
     tiers: [{ id: "t1", minCibil: 700, minTenor: 0, multiplier: 1.0 }],
     minOwner: 1,
     maxOwner: 2,
@@ -32,6 +33,7 @@ function emptyLender(overrides = {}) {
     irrRate: 15,
     pf: 1,
     notes: "",
+    serviceableLocations: [], // e.g. ["Mumbai","Pune","Maharashtra"] — empty = serves everywhere
     ...overrides,
   };
 }
