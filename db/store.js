@@ -11,6 +11,7 @@ const path = require("path");
 const DATA_DIR = path.join(__dirname, "..", "data");
 const LENDERS_FILE = path.join(DATA_DIR, "lenders.json");
 const HISTORY_FILE = path.join(DATA_DIR, "history.json");
+const APPLICANTS_FILE = path.join(DATA_DIR, "applicants.json");
 const SEED_FILE = path.join(__dirname, "lenders.seed.json");
 
 function ensureDataDir() {
@@ -41,6 +42,7 @@ function init() {
   const seed = fs.existsSync(SEED_FILE) ? readJSON(SEED_FILE) : [];
   ensureFile(LENDERS_FILE, seed);
   ensureFile(HISTORY_FILE, []);
+  ensureFile(APPLICANTS_FILE, []);
 }
 
 // ---------- lenders ----------
@@ -101,6 +103,47 @@ function clearHistory() {
   writeJSON(HISTORY_FILE, []);
 }
 
+// ---------- applicants (saved customer profiles) ----------
+// A profile is captured once (name/contact/PAN/CIBIL/ITR/FOIR/ABB/etc.)
+// and then reused to prefill any product check (BT top-up, refinance,
+// and future products) without re-entering the same details.
+function getApplicants() {
+  init();
+  return readJSON(APPLICANTS_FILE);
+}
+
+function saveApplicants(applicants) {
+  writeJSON(APPLICANTS_FILE, applicants);
+  return applicants;
+}
+
+function getApplicant(id) {
+  return getApplicants().find((a) => a.id === id) || null;
+}
+
+function addApplicant(applicant) {
+  const applicants = getApplicants();
+  applicants.unshift(applicant); // newest first
+  saveApplicants(applicants);
+  return applicant;
+}
+
+function updateApplicant(id, patch) {
+  const applicants = getApplicants();
+  const idx = applicants.findIndex((a) => a.id === id);
+  if (idx === -1) return null;
+  applicants[idx] = { ...applicants[idx], ...patch, id: applicants[idx].id };
+  saveApplicants(applicants);
+  return applicants[idx];
+}
+
+function deleteApplicant(id) {
+  const applicants = getApplicants();
+  const next = applicants.filter((a) => a.id !== id);
+  saveApplicants(next);
+  return next.length !== applicants.length;
+}
+
 module.exports = {
   init,
   getLenders,
@@ -112,4 +155,10 @@ module.exports = {
   getHistory,
   appendHistory,
   clearHistory,
+  getApplicants,
+  saveApplicants,
+  getApplicant,
+  addApplicant,
+  updateApplicant,
+  deleteApplicant,
 };
