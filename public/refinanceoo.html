@@ -32,6 +32,7 @@
   <!-- ================= CHECK ELIGIBILITY ================= -->
   <div class="panel active" id="panelCalc">
     <div id="calcStatus"></div>
+    <div id="applicantBanner"></div>
     <div class="status-banner info" style="margin-bottom:14px;">
       For a vehicle with <b>no existing loan</b> (fully owned / loan already closed). Lender advances a fresh loan against the vehicle's current valuation.
     </div>
@@ -39,8 +40,28 @@
       <div>
         <div class="card" id="calcForm">
           <h2>Applicant &amp; vehicle details</h2>
-          <div id="calcApplicantSummary"></div>
-          <div class="grid2" id="calcFormFields"></div>
+          <div class="grid2">
+            <div class="field"><label>CIBIL score</label><input type="number" id="in_cibil" value="730"></div>
+            <div class="field"><label>Vehicle valuation (₹)</label><input type="number" id="in_valuation" value="1200000"></div>
+            <div class="field"><label>Serial owner</label>
+              <select id="in_owner"><option value="1">1st owner</option><option value="2">2nd owner</option><option value="3">3rd owner</option></select>
+            </div>
+            <div class="field"><label>Applicant age</label><input type="number" id="in_age" value="38"></div>
+            <div class="field"><label>Employment type</label>
+              <select id="in_employment"><option value="salaried">Salaried</option><option value="senp">Self-employed</option></select>
+            </div>
+            <div class="field"><label>FOIR met?</label>
+              <select id="in_foirMet"><option value="yes">Yes</option><option value="no">No</option></select>
+            </div>
+            <div class="field"><label>Avg. bank balance (× EMI)</label><input type="number" step="0.1" id="in_abbMultiple" value="1"></div>
+            <div class="field"><label>Residence</label>
+              <select id="in_resi"><option value="owned">Owned</option><option value="rented">Rented</option></select>
+            </div>
+            <div class="field"><label>ITR available?</label>
+              <select id="in_itr"><option value="yes">Yes</option><option value="no">No</option></select>
+            </div>
+            <div class="field"><label>Location (city / state)</label><input type="text" id="in_location" placeholder="e.g. Indore, MP"><span class="hint">Used to match lenders that cover this location</span></div>
+          </div>
           <button class="btn-primary" onclick="runCheck()">Check refinance eligibility</button>
         </div>
       </div>

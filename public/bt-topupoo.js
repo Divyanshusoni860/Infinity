@@ -1,10 +1,10 @@
-// public/refinance.js
-// Mirrors bt-topup.js, but for the refinance flow: no existing loan, no
-// EMI/closure amount/tenor-served — just valuation x multiplier.
+// public/app.js
+// All eligibility math happens server-side (see /lib/eligibility.js) —
+// this file just renders the UI and talks to the JSON API.
 
 let LENDERS = []; // local cache of ALL lenders (both BT and refinance) from the server
-const MY_CATEGORY = "refinance";
-function myLenders() { return LENDERS.filter((l) => l.category === MY_CATEGORY); }
+const MY_CATEGORY = "bt"; // this page only manages/shows BT top-up lenders
+function myLenders() { return LENDERS.filter((l) => (l.category || "bt") === MY_CATEGORY); }
 
 // ---------------- helpers ----------------
 function inr(n) {
@@ -53,116 +53,28 @@ function switchTab(tab) {
   if (tab === "history") loadHistory();
 }
 
-// ---------------- applicant & vehicle field definitions ----------------
-// productOnly fields are never on the applicant profile, so they're always asked.
-// Everything else is skipped automatically once the saved applicant already has it.
-const FIELD_DEFS = [
-  { id: "in_cibil", key: "cibil", label: "CIBIL score", type: "number", def: "730" },
-  { id: "in_valuation", key: "valuation", label: "Vehicle valuation (₹)", type: "number", def: "1200000", productOnly: true },
-  { id: "in_owner", key: "owner", label: "Serial owner", type: "select", options: [["1", "1st owner"], ["2", "2nd owner"], ["3", "3rd owner"]], def: "1", productOnly: true },
-  { id: "in_age", key: "age", label: "Applicant age", type: "number", def: "38" },
-  { id: "in_employment", key: "employment", label: "Employment type", type: "select", options: [["salaried", "Salaried"], ["senp", "Self-employed"]], def: "salaried" },
-  { id: "in_foirMet", key: "foirMet", label: "FOIR met?", type: "select", options: [["yes", "Yes"], ["no", "No"]], def: "yes" },
-  { id: "in_abbMultiple", key: "abbMultiple", label: "Avg. bank balance (× EMI)", type: "number", step: "0.1", def: "1" },
-  { id: "in_resi", key: "resi", label: "Residence", type: "select", options: [["owned", "Owned"], ["rented", "Rented"]], def: "owned" },
-  { id: "in_itr", key: "itr", label: "ITR available?", type: "select", options: [["yes", "Yes"], ["no", "No"]], def: "yes" },
-  { id: "in_location", key: "location", label: "Location (city / state)", type: "text", hint: "Used to match lenders that cover this location", def: "" },
-];
-
-function fieldInputHTML(def) {
-  const hintHTML = def.hint ? `<span class="hint">${esc(def.hint)}</span>` : "";
-  if (def.type === "select") {
-    const opts = def.options.map(([val, label]) => `<option value="${val}" ${val === def.def ? "selected" : ""}>${label}</option>`).join("");
-    return `<div class="field"><label>${def.label}</label><select id="${def.id}">${opts}</select>${hintHTML}</div>`;
-  }
-  const stepAttr = def.step ? ` step="${def.step}"` : "";
-  return `<div class="field"><label>${def.label}</label><input type="${def.type}"${stepAttr} id="${def.id}" value="${esc(def.def)}">${hintHTML}</div>`;
-}
-
-// Whether the applicant already has a real value for this field (so it can be skipped).
-function isKnown(a, key) {
-  if (!a) return false;
-  const raw = {
-    cibil: a.cibil, age: a.age, employment: a.employment, foirMet: a.foirMet,
-    abbMultiple: a.abbMultiple, resi: a.resi, itr: a.itr, location: a.location,
-  }[key];
-  return raw !== null && raw !== undefined && raw !== "";
-}
-function knownValue(a, key) {
-  switch (key) {
-    case "cibil": return a.cibil;
-    case "age": return a.age;
-    case "employment": return a.employment || "salaried";
-    case "foirMet": return a.foirMet === false ? "no" : "yes";
-    case "abbMultiple": return a.abbMultiple;
-    case "resi": return a.resi || "owned";
-    case "itr": return a.itr ? "yes" : "no";
-    case "location": return a.location || "";
-    default: return undefined;
-  }
-}
-
-function applicantSummaryHTML(a) {
-  const chips = [
-    isKnown(a, "cibil") ? `CIBIL ${a.cibil}` : null,
-    isKnown(a, "age") ? `Age ${a.age}` : null,
-    a.employment === "senp" ? "Self-employed" : "Salaried",
-    `FOIR met: ${a.foirMet === false ? "No" : "Yes"}`,
-    isKnown(a, "abbMultiple") ? `ABB ${a.abbMultiple}× EMI` : null,
-    a.resi === "rented" ? "Rented" : "Owned",
-    `ITR: ${a.itr ? "Yes" : "No"}`,
-    isKnown(a, "location") ? `📍 ${a.location}` : null,
-  ].filter(Boolean);
-
-  return `<div class="applicant-banner">
-      <div class="ab-main">Using saved info for <b>${esc(a.name || "this applicant")}</b> · PAN ${esc(a.pan || "—")}</div>
-      <a href="/?applicantId=${encodeURIComponent(a.id)}">Edit applicant info</a>
-    </div>
-    <div class="ab-chips">${chips.map((c) => `<span class="ab-chip">${esc(c)}</span>`).join("")}</div>
-    <div style="margin:2px 0 16px;">
-      <a href="#" onclick="FORCE_FULL_FORM=true;renderCalcForm();return false;" style="font-size:11.5px;font-weight:700;color:var(--primary);text-decoration:none;">Enter all details manually instead →</a>
-    </div>`;
-}
-
-let FORCE_FULL_FORM = false;
-
-function renderCalcForm() {
-  const summaryEl = document.getElementById("calcApplicantSummary");
-  const fieldsEl = document.getElementById("calcFormFields");
-  const useCompact = !!APPLICANT && !FORCE_FULL_FORM;
-
-  if (useCompact) {
-    summaryEl.innerHTML = applicantSummaryHTML(APPLICANT);
-  } else if (APPLICANT) {
-    summaryEl.innerHTML = `<div class="status-banner info">Entering details manually for this check. <a href="#" onclick="FORCE_FULL_FORM=false;renderCalcForm();return false;" style="color:inherit;font-weight:700;">↩ Use saved applicant info instead</a></div>`;
-  } else {
-    summaryEl.innerHTML = "";
-  }
-
-  const toRender = FIELD_DEFS.filter((def) => {
-    if (!useCompact) return true;
-    if (def.productOnly) return true;
-    return !isKnown(APPLICANT, def.key);
-  });
-  fieldsEl.innerHTML = toRender.map(fieldInputHTML).join("");
-}
-
-// value for a field: from the visible input if it's rendered, else from the known applicant value
-function v(id, key) {
-  const el = document.getElementById(id);
-  if (el) return el.value;
-  if (APPLICANT) { const kv = knownValue(APPLICANT, key); return kv === undefined || kv === null ? "" : kv; }
-  return "";
-}
-
 // ---------------- eligibility check ----------------
 async function runCheck() {
-  const input = {};
-  FIELD_DEFS.forEach((def) => { input[def.key] = v(def.id, def.key); });
+  const v = (id) => document.getElementById(id).value;
+  const input = {
+    cibil: v("in_cibil"),
+    tenorServed: v("in_tenorServed"),
+    currentEMI: v("in_currentEMI"),
+    valuation: v("in_valuation"),
+    closureAmount: v("in_closureAmount"),
+    owner: v("in_owner"),
+    age: v("in_age"),
+    employment: v("in_employment"),
+    foirMet: v("in_foirMet"),
+    abbMultiple: v("in_abbMultiple"),
+    resi: v("in_resi"),
+    itr: v("in_itr"),
+    location: v("in_location"),
+  };
 
   showStatus("calcStatus", "");
   try {
-    const { eligible, ineligible } = await api("/api/check-refinance", {
+    const { eligible, ineligible } = await api("/api/check", {
       method: "POST",
       body: JSON.stringify(input),
     });
@@ -194,13 +106,14 @@ function renderResults(eligible, ineligible) {
             ${logoHTML({ name: r.lenderName, logoUrl: r.logoUrl }, "sm")}
             <div>
               <p class="rc-name">${esc(r.lenderName)}</p>
-              <div class="rc-meta">${r.multiplier}× of valuation · ${r.irrRate}% IRR · ${r.pf}% PF</div>
+              <div class="rc-meta">${r.multiplier}× multiplier · ${r.irrRate}% IRR · ${r.pf}% PF</div>
             </div>
           </div>
           <div class="rc-icon-ok">✓</div>
         </div>
-        <div class="rc-stats" style="grid-template-columns:1fr;">
-          <div class="rc-stat"><div class="l">Loan amount</div><div class="v green">${inr(r.loanAmount)}</div></div>
+        <div class="rc-stats">
+          <div class="rc-stat"><div class="l">Loan amount</div><div class="v">${inr(r.loanAmount)}</div></div>
+          <div class="rc-stat"><div class="l">Top-up (cash out)</div><div class="v green">${inr(r.topup)}</div></div>
         </div>
         ${r.notes ? `<div class="rc-note">${esc(r.notes)}</div>` : ""}
       </div>`;
@@ -237,9 +150,18 @@ async function loadLenders() {
   }
 }
 
+function buildTiersHTML(lender) {
+  return lender.tiers.map((t) => `
+    <div class="tier-row" data-tier-id="${t.id}">
+      <div class="field"><label>Min CIBIL</label><input type="number" value="${t.minCibil}" oninput="onTierInput('${lender.id}','${t.id}','minCibil',this.value)"></div>
+      <div class="field"><label>Min tenor served</label><input type="number" value="${t.minTenor}" oninput="onTierInput('${lender.id}','${t.id}','minTenor',this.value)"></div>
+      <div class="field"><label>Multiplier</label><input type="number" step="0.01" value="${t.multiplier}" oninput="onTierInput('${lender.id}','${t.id}','multiplier',this.value)"></div>
+      <button class="tier-remove" onclick="removeTier('${lender.id}','${t.id}')">✕</button>
+    </div>
+  `).join("");
+}
+
 function lenderCardHTML(l) {
-  const mult = l.tiers[0] ? l.tiers[0].multiplier : 0;
-  const minCibil = l.tiers[0] ? l.tiers[0].minCibil : 700;
   return `
   <div class="lender-row" id="lender_${l.id}">
     <button class="lender-head" onclick="toggleLender('${l.id}')">
@@ -247,7 +169,7 @@ function lenderCardHTML(l) {
         <span id="logowrap_${l.id}">${logoHTML(l, "sm")}</span>
         <div>
           <div class="ln">${esc(l.name)}</div>
-          <div class="lm" id="lendermeta_${l.id}">${mult}× of valuation · min CIBIL ${minCibil}</div>
+          <div class="lm" id="lendermeta_${l.id}">${l.calcBasis === "emi" ? "EMI-based" : "Valuation-based"} · ${l.tiers.length} tier${l.tiers.length !== 1 ? "s" : ""}</div>
         </div>
       </div>
       <div class="chev">▾</div>
@@ -265,20 +187,31 @@ function lenderCardHTML(l) {
         <label>Lender name</label>
         <input type="text" value="${esc(l.name)}" oninput="onLenderField('${l.id}','name',this.value,'text')">
       </div>
-
-      <div class="grid2" style="margin-bottom:10px;">
-        <div class="field"><label>Min CIBIL</label><input type="number" value="${minCibil}" oninput="onTierInput('${l.id}','minCibil',this.value)"></div>
-        <div class="field"><label>Multiplier (× valuation)</label><input type="number" step="0.01" value="${mult}" oninput="onTierInput('${l.id}','multiplier',this.value)"></div>
+      <div class="field" style="margin-bottom:12px;">
+        <label>Loan basis</label>
+        <select onchange="onLenderField('${l.id}','calcBasis',this.value,'text')">
+          <option value="emi" ${l.calcBasis === "emi" ? "selected" : ""}>EMI × tenor served</option>
+          <option value="valuation" ${l.calcBasis === "valuation" ? "selected" : ""}>Vehicle valuation</option>
+        </select>
       </div>
 
-      <div class="grid2">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;font-weight:600;color:var(--muted);">Multiplier tiers</span>
+        <button class="small-btn" onclick="addTier('${l.id}')">+ Add tier</button>
+      </div>
+      <div id="tiers_${l.id}">${buildTiersHTML(l)}</div>
+
+      <div class="grid2" style="margin-top:10px;">
         <div class="field"><label>Min owner</label><input type="number" value="${l.minOwner}" oninput="onLenderField('${l.id}','minOwner',this.value,'num')"></div>
         <div class="field"><label>Max owner</label><input type="number" value="${l.maxOwner}" oninput="onLenderField('${l.id}','maxOwner',this.value,'num')"></div>
         <div class="field"><label>Age min (salaried)</label><input type="number" value="${l.ageSalariedMin}" oninput="onLenderField('${l.id}','ageSalariedMin',this.value,'num')"></div>
         <div class="field"><label>Age max (salaried)</label><input type="number" value="${l.ageSalariedMax}" oninput="onLenderField('${l.id}','ageSalariedMax',this.value,'num')"></div>
         <div class="field"><label>Age min (self-emp.)</label><input type="number" value="${l.ageSenpMin}" oninput="onLenderField('${l.id}','ageSenpMin',this.value,'num')"></div>
         <div class="field"><label>Age max (self-emp.)</label><input type="number" value="${l.ageSenpMax}" oninput="onLenderField('${l.id}','ageSenpMax',this.value,'num')"></div>
+        <div class="field"><label>Min tenor served (EOT)</label><input type="number" value="${l.minTenorServed}" oninput="onLenderField('${l.id}','minTenorServed',this.value,'num')"></div>
         <div class="field"><label>Loan capping (₹, 0=none)</label><input type="number" value="${l.loanCapping}" oninput="onLenderField('${l.id}','loanCapping',this.value,'num')"></div>
+        <div class="field"><label>Max top-up cap (₹, 0=none)</label><input type="number" value="${l.maxTopupCap || 0}" oninput="onLenderField('${l.id}','maxTopupCap',this.value,'num')"><span class="hint">Caps the top-up itself, on top of any loan capping above</span></div>
+        <div class="field"><label>Max top-up (× current EMI, 0=none)</label><input type="number" step="0.1" value="${l.maxTopupMultipleOfEMI || 0}" oninput="onLenderField('${l.id}','maxTopupMultipleOfEMI',this.value,'numOrNull')"></div>
         <div class="field"><label>Min ABB (× EMI)</label><input type="number" step="0.1" value="${l.minABBMultiple}" oninput="onLenderField('${l.id}','minABBMultiple',this.value,'num')"></div>
         <div class="field"><label>FOIR requirement</label>
           <select onchange="onLenderField('${l.id}','requiresFoirMet',this.value,'tri')">
@@ -331,6 +264,7 @@ function toggleLender(id) {
   document.getElementById("lender_" + id).classList.toggle("open");
 }
 
+// debounce so we don't fire a PUT on every single keystroke
 const pendingSaves = {};
 function scheduleSave(id) {
   clearTimeout(pendingSaves[id]);
@@ -351,18 +285,23 @@ function onLenderField(id, field, rawVal, kind) {
   if (!l) return;
   let val = rawVal;
   if (kind === "num") val = Number(rawVal) || 0;
+  else if (kind === "numOrNull") val = Number(rawVal) > 0 ? Number(rawVal) : null;
   else if (kind === "bool") val = !!rawVal;
   else if (kind === "tri") val = rawVal === "na" ? null : rawVal === "yes";
   l[field] = val;
 
-  if (field === "name") {
-    const headEl = document.querySelector("#lender_" + id + " .ln");
-    if (headEl) headEl.textContent = l.name;
-    if (!l.logoUrl) {
-      const wrap = document.getElementById("logowrap_" + id);
-      if (wrap) wrap.innerHTML = logoHTML(l, "sm");
-      const preview = document.getElementById("logopreview_" + id);
-      if (preview) preview.innerHTML = logoHTML(l, "lg");
+  if (field === "name" || field === "calcBasis") {
+    const metaEl = document.getElementById("lendermeta_" + id);
+    if (metaEl) metaEl.textContent = `${l.calcBasis === "emi" ? "EMI-based" : "Valuation-based"} · ${l.tiers.length} tier${l.tiers.length !== 1 ? "s" : ""}`;
+    if (field === "name") {
+      const headEl = document.querySelector("#lender_" + id + " .ln");
+      if (headEl) headEl.textContent = l.name;
+      if (!l.logoUrl) {
+        const wrap = document.getElementById("logowrap_" + id);
+        if (wrap) wrap.innerHTML = logoHTML(l, "sm");
+        const preview = document.getElementById("logopreview_" + id);
+        if (preview) preview.innerHTML = logoHTML(l, "lg");
+      }
     }
   }
   scheduleSave(id);
@@ -380,6 +319,11 @@ function onLogoFile(id, input) {
   const reader = new FileReader();
   reader.onload = () => {
     l.logoUrl = reader.result;
+    const wrap = document.getElementById("logowrap_" + id);
+    if (wrap) wrap.innerHTML = logoHTML(l, "sm");
+    const preview = document.getElementById("logopreview_" + id);
+    if (preview) preview.innerHTML = logoHTML(l, "lg");
+    // re-render so the "Remove logo" link appears
     const row = document.getElementById("lender_" + id);
     const wasOpen = row && row.classList.contains("open");
     row.outerHTML = lenderCardHTML(l);
@@ -400,30 +344,42 @@ function removeLogo(id) {
   scheduleSave(id);
 }
 
-// Refinance lenders only ever have a single tier (flat multiplier of valuation).
-function onTierInput(lenderId, field, rawVal) {
+function onTierInput(lenderId, tierId, field, rawVal) {
   const l = findLender(lenderId);
   if (!l) return;
-  if (!l.tiers[0]) l.tiers[0] = { id: "t1", minCibil: 700, minTenor: 0, multiplier: 1 };
-  l.tiers[0][field] = Number(rawVal) || 0;
-  const metaEl = document.getElementById("lendermeta_" + lenderId);
-  if (metaEl) metaEl.textContent = `${l.tiers[0].multiplier}× of valuation · min CIBIL ${l.tiers[0].minCibil}`;
+  const t = l.tiers.find((t) => t.id === tierId);
+  if (!t) return;
+  t[field] = Number(rawVal) || 0;
   scheduleSave(lenderId);
+}
+
+function addTier(lenderId) {
+  const l = findLender(lenderId);
+  if (!l) return;
+  l.tiers.push({ id: "t" + Date.now().toString(36), minCibil: 700, minTenor: 0, multiplier: 1.0 });
+  document.getElementById("tiers_" + lenderId).innerHTML = buildTiersHTML(l);
+  updateMeta(l);
+  scheduleSave(lenderId);
+}
+
+function removeTier(lenderId, tierId) {
+  const l = findLender(lenderId);
+  if (!l) return;
+  l.tiers = l.tiers.filter((t) => t.id !== tierId);
+  document.getElementById("tiers_" + lenderId).innerHTML = buildTiersHTML(l);
+  updateMeta(l);
+  scheduleSave(lenderId);
+}
+
+function updateMeta(l) {
+  const metaEl = document.getElementById("lendermeta_" + l.id);
+  if (metaEl) metaEl.textContent = `${l.calcBasis === "emi" ? "EMI-based" : "Valuation-based"} · ${l.tiers.length} tier${l.tiers.length !== 1 ? "s" : ""}`;
 }
 
 async function addLender() {
   showStatus("lendersStatus", "");
   try {
-    const l = await api("/api/lenders", {
-      method: "POST",
-      body: JSON.stringify({
-        name: "New Refinance Lender",
-        category: MY_CATEGORY,
-        calcBasis: "valuation",
-        tiers: [{ id: "t1", minCibil: 700, minTenor: 0, multiplier: 1.0 }],
-        minTenorServed: 0,
-      }),
-    });
+    const l = await api("/api/lenders", { method: "POST", body: JSON.stringify({ name: "New Lender", category: MY_CATEGORY }) });
     LENDERS.push(l);
     document.getElementById("lendersList").insertAdjacentHTML("beforeend", lenderCardHTML(l));
     document.getElementById("lenderCount").textContent = myLenders().length;
@@ -461,7 +417,7 @@ async function resetLenders() {
 async function loadHistory() {
   try {
     const history = await api("/api/history");
-    renderHistory(history.filter((h) => h.type === MY_CATEGORY));
+    renderHistory(history.filter((h) => (h.type || "bt") === MY_CATEGORY));
   } catch (err) {
     document.getElementById("historyList").innerHTML = `<div class="status-banner error">Couldn't load history: ${esc(err.message)}</div>`;
   }
@@ -478,8 +434,8 @@ function renderHistory(history) {
     const ok = h.eligibleCount > 0;
     return `<div class="history-item">
       <div>
-        <div class="hi-main">${ok ? `Best: <b>${esc(h.bestLender)}</b> — ${inr(h.bestLoanAmount)} loan` : "No lender matched"}</div>
-        <div class="hi-time">${esc(time)} · CIBIL ${h.input.cibil} · Valuation ${inr(h.input.valuation)}</div>
+        <div class="hi-main">${ok ? `Best: <b>${esc(h.bestLender)}</b> — ${inr(h.bestTopup)} top-up` : "No lender matched"}</div>
+        <div class="hi-time">${esc(time)} · CIBIL ${h.input.cibil} · Tenor ${h.input.tenorServed}mo</div>
       </div>
       <div class="hi-badge ${ok ? "ok" : "none"}">${h.eligibleCount} eligible</div>
     </div>`;
@@ -487,7 +443,7 @@ function renderHistory(history) {
 }
 
 async function clearHistory() {
-  if (!confirm("Clear all check history (both BT and refinance)?")) return;
+  if (!confirm("Clear all check history?")) return;
   try {
     await api("/api/history", { method: "DELETE" });
     loadHistory();
@@ -498,16 +454,28 @@ async function clearHistory() {
 
 // ---------------- applicant prefill ----------------
 const APPLICANT_ID = new URLSearchParams(location.search).get("applicantId");
-let APPLICANT = null;
 
 async function loadApplicantPrefill() {
-  if (!APPLICANT_ID) { renderCalcForm(); return; }
+  const bannerEl = document.getElementById("applicantBanner");
+  if (!APPLICANT_ID) return;
   try {
-    APPLICANT = await api("/api/applicants/" + encodeURIComponent(APPLICANT_ID));
+    const a = await api("/api/applicants/" + encodeURIComponent(APPLICANT_ID));
+    const set = (id, val) => { if (val !== null && val !== undefined && val !== "") document.getElementById(id).value = val; };
+    set("in_cibil", a.cibil);
+    set("in_age", a.age);
+    set("in_employment", a.employment);
+    set("in_foirMet", a.foirMet === false ? "no" : "yes");
+    set("in_abbMultiple", a.abbMultiple);
+    set("in_resi", a.resi);
+    set("in_itr", a.itr ? "yes" : "no");
+    set("in_location", a.location);
+    bannerEl.innerHTML = `<div class="applicant-banner">
+      <div class="ab-main">Prefilled from applicant: <b>${esc(a.name || "Unnamed")}</b> · PAN ${esc(a.pan || "—")}</div>
+      <a href="/check?applicantId=${encodeURIComponent(a.id)}">← Back to product picker</a>
+    </div>`;
   } catch (err) {
-    showStatus("calcStatus", "Couldn't load applicant: " + err.message, "error");
+    bannerEl.innerHTML = `<div class="status-banner error">Couldn't load applicant: ${esc(err.message)}</div>`;
   }
-  renderCalcForm();
 }
 
 // ---------------- init ----------------

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finqy — Applicant Profile</title>
+<meta name="theme-color" content="#4338CA" />
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="brand">
+      <a href="/" class="back-link" aria-label="Back to all tools">←</a>
+      <div class="brand-mark">F</div>
+      <div>
+        <div class="brand-name">Finqy</div>
+        <div class="brand-sub" id="pageSub">Applicant Profile</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel active" style="padding:20px 24px;">
+    <div id="formStatus"></div>
+
+    <div class="layout-2col">
+      <div>
+
+        <div class="card">
+          <div class="section-sub">Contact</div>
+          <div class="grid2">
+            <div class="field"><label>Full name</label><input type="text" id="f_name" placeholder="e.g. Rohit Sharma"></div>
+            <div class="field"><label>Phone</label><input type="text" id="f_phone" placeholder="10-digit mobile"></div>
+            <div class="field"><label>Email</label><input type="text" id="f_email" placeholder="optional"></div>
+            <div class="field"><label>Location (city / state)</label><input type="text" id="f_location" placeholder="e.g. Indore, MP"><span class="hint">Used to match lenders that cover this location</span></div>
+          </div>
+
+          <div class="section-sub">Credit profile</div>
+          <div class="grid2">
+            <div class="field"><label>PAN</label><input type="text" id="f_pan" placeholder="ABCDE1234F" style="text-transform:uppercase;"></div>
+            <div class="field"><label>CIBIL score</label><input type="number" id="f_cibil" placeholder="e.g. 730"><span class="hint">Manual entry — no bureau API connected yet</span></div>
+          </div>
+
+          <div class="section-sub">Employment</div>
+          <div class="grid2">
+            <div class="field"><label>Employment type</label>
+              <select id="f_employment"><option value="salaried">Salaried</option><option value="senp">Self-employed</option></select>
+            </div>
+            <div class="field"><label>Age</label><input type="number" id="f_age" placeholder="e.g. 38"></div>
+          </div>
+
+          <div class="section-sub">ITR &amp; business</div>
+          <div class="check-row" style="margin-top:0;">
+            <label><input type="checkbox" id="f_itr" onchange="toggleBusinessFields()"> ITR filed / available</label>
+            <label><input type="checkbox" id="f_businessOwner" onchange="toggleBusinessFields()"> Runs own business</label>
+          </div>
+          <div class="grid2" id="businessFields" style="display:none;margin-top:10px;">
+            <div class="field"><label>Business running for (years)</label><input type="number" step="0.5" id="f_businessVintage" placeholder="e.g. 4"></div>
+            <div class="field"><label>GST registered?</label>
+              <select id="f_gstRegistered"><option value="no">No</option><option value="yes">Yes</option></select>
+            </div>
+            <div class="field" style="grid-column:1 / -1;"><label>GST / business name</label><input type="text" id="f_gstName" placeholder="Registered business name"></div>
+          </div>
+
+          <div class="section-sub">Obligations &amp; banking</div>
+          <div class="grid2">
+            <div class="field"><label>FOIR met?</label>
+              <select id="f_foirMet"><option value="yes">Yes</option><option value="no">No</option></select>
+            </div>
+            <div class="field"><label>FOIR / obligation (%)</label><input type="number" step="0.1" id="f_foirPercent" placeholder="e.g. 45"><span class="hint">Recorded for reference — the Yes/No above drives eligibility today</span></div>
+            <div class="field"><label>Avg. bank balance (× EMI)</label><input type="number" step="0.1" id="f_abbMultiple" placeholder="e.g. 1.5"><span class="hint">Used directly by BT top-up / refinance checks</span></div>
+            <div class="field"><label>Avg. bank balance (₹, informational)</label><input type="number" id="f_abbAmount" placeholder="e.g. 65000"></div>
+          </div>
+          <div class="upload-disabled" style="margin-top:4px;">
+            <span class="badge-soon">Coming soon</span>
+            <span>Upload a bank statement PDF to auto-extract the 5th/15th/25th balances — not wired up yet, use the manual ABB fields above for now.</span>
+          </div>
+
+          <div class="section-sub">Ownership</div>
+          <div class="field">
+            <label>Residence</label>
+            <select id="f_resi"><option value="owned">Owned</option><option value="rented">Rented</option></select>
+            <span class="hint">Reused across car loan, refinance, and future products</span>
+          </div>
+
+          <button class="btn-primary" onclick="saveProfile()" id="saveBtn">Save profile &amp; continue →</button>
+        </div>
+
+      </div>
+      <div>
+        <div class="empty-state">
+          This profile is saved once and reused everywhere — after saving you'll land on a page where you can check it against BT Top-Up, Refinance, or any future product with one click.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/profile.js"></script>
+</body>
+</html>

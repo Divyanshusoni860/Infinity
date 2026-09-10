@@ -53,112 +53,21 @@ function switchTab(tab) {
   if (tab === "history") loadHistory();
 }
 
-// ---------------- applicant & vehicle field definitions ----------------
-// productOnly fields are never on the applicant profile, so they're always asked.
-// Everything else is skipped automatically once the saved applicant already has it.
-const FIELD_DEFS = [
-  { id: "in_cibil", key: "cibil", label: "CIBIL score", type: "number", def: "730" },
-  { id: "in_valuation", key: "valuation", label: "Vehicle valuation (₹)", type: "number", def: "1200000", productOnly: true },
-  { id: "in_owner", key: "owner", label: "Serial owner", type: "select", options: [["1", "1st owner"], ["2", "2nd owner"], ["3", "3rd owner"]], def: "1", productOnly: true },
-  { id: "in_age", key: "age", label: "Applicant age", type: "number", def: "38" },
-  { id: "in_employment", key: "employment", label: "Employment type", type: "select", options: [["salaried", "Salaried"], ["senp", "Self-employed"]], def: "salaried" },
-  { id: "in_foirMet", key: "foirMet", label: "FOIR met?", type: "select", options: [["yes", "Yes"], ["no", "No"]], def: "yes" },
-  { id: "in_abbMultiple", key: "abbMultiple", label: "Avg. bank balance (× EMI)", type: "number", step: "0.1", def: "1" },
-  { id: "in_resi", key: "resi", label: "Residence", type: "select", options: [["owned", "Owned"], ["rented", "Rented"]], def: "owned" },
-  { id: "in_itr", key: "itr", label: "ITR available?", type: "select", options: [["yes", "Yes"], ["no", "No"]], def: "yes" },
-  { id: "in_location", key: "location", label: "Location (city / state)", type: "text", hint: "Used to match lenders that cover this location", def: "" },
-];
-
-function fieldInputHTML(def) {
-  const hintHTML = def.hint ? `<span class="hint">${esc(def.hint)}</span>` : "";
-  if (def.type === "select") {
-    const opts = def.options.map(([val, label]) => `<option value="${val}" ${val === def.def ? "selected" : ""}>${label}</option>`).join("");
-    return `<div class="field"><label>${def.label}</label><select id="${def.id}">${opts}</select>${hintHTML}</div>`;
-  }
-  const stepAttr = def.step ? ` step="${def.step}"` : "";
-  return `<div class="field"><label>${def.label}</label><input type="${def.type}"${stepAttr} id="${def.id}" value="${esc(def.def)}">${hintHTML}</div>`;
-}
-
-// Whether the applicant already has a real value for this field (so it can be skipped).
-function isKnown(a, key) {
-  if (!a) return false;
-  const raw = {
-    cibil: a.cibil, age: a.age, employment: a.employment, foirMet: a.foirMet,
-    abbMultiple: a.abbMultiple, resi: a.resi, itr: a.itr, location: a.location,
-  }[key];
-  return raw !== null && raw !== undefined && raw !== "";
-}
-function knownValue(a, key) {
-  switch (key) {
-    case "cibil": return a.cibil;
-    case "age": return a.age;
-    case "employment": return a.employment || "salaried";
-    case "foirMet": return a.foirMet === false ? "no" : "yes";
-    case "abbMultiple": return a.abbMultiple;
-    case "resi": return a.resi || "owned";
-    case "itr": return a.itr ? "yes" : "no";
-    case "location": return a.location || "";
-    default: return undefined;
-  }
-}
-
-function applicantSummaryHTML(a) {
-  const chips = [
-    isKnown(a, "cibil") ? `CIBIL ${a.cibil}` : null,
-    isKnown(a, "age") ? `Age ${a.age}` : null,
-    a.employment === "senp" ? "Self-employed" : "Salaried",
-    `FOIR met: ${a.foirMet === false ? "No" : "Yes"}`,
-    isKnown(a, "abbMultiple") ? `ABB ${a.abbMultiple}× EMI` : null,
-    a.resi === "rented" ? "Rented" : "Owned",
-    `ITR: ${a.itr ? "Yes" : "No"}`,
-    isKnown(a, "location") ? `📍 ${a.location}` : null,
-  ].filter(Boolean);
-
-  return `<div class="applicant-banner">
-      <div class="ab-main">Using saved info for <b>${esc(a.name || "this applicant")}</b> · PAN ${esc(a.pan || "—")}</div>
-      <a href="/?applicantId=${encodeURIComponent(a.id)}">Edit applicant info</a>
-    </div>
-    <div class="ab-chips">${chips.map((c) => `<span class="ab-chip">${esc(c)}</span>`).join("")}</div>
-    <div style="margin:2px 0 16px;">
-      <a href="#" onclick="FORCE_FULL_FORM=true;renderCalcForm();return false;" style="font-size:11.5px;font-weight:700;color:var(--primary);text-decoration:none;">Enter all details manually instead →</a>
-    </div>`;
-}
-
-let FORCE_FULL_FORM = false;
-
-function renderCalcForm() {
-  const summaryEl = document.getElementById("calcApplicantSummary");
-  const fieldsEl = document.getElementById("calcFormFields");
-  const useCompact = !!APPLICANT && !FORCE_FULL_FORM;
-
-  if (useCompact) {
-    summaryEl.innerHTML = applicantSummaryHTML(APPLICANT);
-  } else if (APPLICANT) {
-    summaryEl.innerHTML = `<div class="status-banner info">Entering details manually for this check. <a href="#" onclick="FORCE_FULL_FORM=false;renderCalcForm();return false;" style="color:inherit;font-weight:700;">↩ Use saved applicant info instead</a></div>`;
-  } else {
-    summaryEl.innerHTML = "";
-  }
-
-  const toRender = FIELD_DEFS.filter((def) => {
-    if (!useCompact) return true;
-    if (def.productOnly) return true;
-    return !isKnown(APPLICANT, def.key);
-  });
-  fieldsEl.innerHTML = toRender.map(fieldInputHTML).join("");
-}
-
-// value for a field: from the visible input if it's rendered, else from the known applicant value
-function v(id, key) {
-  const el = document.getElementById(id);
-  if (el) return el.value;
-  if (APPLICANT) { const kv = knownValue(APPLICANT, key); return kv === undefined || kv === null ? "" : kv; }
-  return "";
-}
-
 // ---------------- eligibility check ----------------
 async function runCheck() {
-  const input = {};
-  FIELD_DEFS.forEach((def) => { input[def.key] = v(def.id, def.key); });
+  const v = (id) => document.getElementById(id).value;
+  const input = {
+    cibil: v("in_cibil"),
+    valuation: v("in_valuation"),
+    owner: v("in_owner"),
+    age: v("in_age"),
+    employment: v("in_employment"),
+    foirMet: v("in_foirMet"),
+    abbMultiple: v("in_abbMultiple"),
+    resi: v("in_resi"),
+    itr: v("in_itr"),
+    location: v("in_location"),
+  };
 
   showStatus("calcStatus", "");
   try {
@@ -498,16 +407,28 @@ async function clearHistory() {
 
 // ---------------- applicant prefill ----------------
 const APPLICANT_ID = new URLSearchParams(location.search).get("applicantId");
-let APPLICANT = null;
 
 async function loadApplicantPrefill() {
-  if (!APPLICANT_ID) { renderCalcForm(); return; }
+  const bannerEl = document.getElementById("applicantBanner");
+  if (!APPLICANT_ID) return;
   try {
-    APPLICANT = await api("/api/applicants/" + encodeURIComponent(APPLICANT_ID));
+    const a = await api("/api/applicants/" + encodeURIComponent(APPLICANT_ID));
+    const set = (id, val) => { if (val !== null && val !== undefined && val !== "") document.getElementById(id).value = val; };
+    set("in_cibil", a.cibil);
+    set("in_age", a.age);
+    set("in_employment", a.employment);
+    set("in_foirMet", a.foirMet === false ? "no" : "yes");
+    set("in_abbMultiple", a.abbMultiple);
+    set("in_resi", a.resi);
+    set("in_itr", a.itr ? "yes" : "no");
+    set("in_location", a.location);
+    bannerEl.innerHTML = `<div class="applicant-banner">
+      <div class="ab-main">Prefilled from applicant: <b>${esc(a.name || "Unnamed")}</b> · PAN ${esc(a.pan || "—")}</div>
+      <a href="/check?applicantId=${encodeURIComponent(a.id)}">← Back to product picker</a>
+    </div>`;
   } catch (err) {
-    showStatus("calcStatus", "Couldn't load applicant: " + err.message, "error");
+    bannerEl.innerHTML = `<div class="status-banner error">Couldn't load applicant: ${esc(err.message)}</div>`;
   }
-  renderCalcForm();
 }
 
 // ---------------- init ----------------

@@ -14,6 +14,14 @@ function inr(n) {
 function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
+function logoHTML(l, sizeClass) {
+  const cls = "lender-logo" + (sizeClass ? " " + sizeClass : "");
+  if (l.logoUrl) {
+    return `<div class="${cls}"><img src="${esc(l.logoUrl)}" alt="${esc(l.name)} logo"></div>`;
+  }
+  const letter = (l.name || "?").trim().charAt(0).toUpperCase() || "?";
+  return `<div class="${cls}">${esc(letter)}</div>`;
+}
 async function api(path, opts) {
   const res = await fetch(path, {
     headers: { "Content-Type": "application/json" },
@@ -45,23 +53,115 @@ function switchTab(tab) {
   if (tab === "history") loadHistory();
 }
 
+// ---------------- applicant & vehicle field definitions ----------------
+// productOnly fields are never on the applicant profile, so they're always asked.
+// Everything else is skipped automatically once the saved applicant already has it.
+const FIELD_DEFS = [
+  { id: "in_cibil", key: "cibil", label: "CIBIL score", type: "number", def: "730" },
+  { id: "in_tenorServed", key: "tenorServed", label: "Tenor served (months)", type: "number", def: "13", productOnly: true },
+  { id: "in_currentEMI", key: "currentEMI", label: "Current EMI (₹)", type: "number", def: "46109", productOnly: true },
+  { id: "in_valuation", key: "valuation", label: "Vehicle valuation (₹)", type: "number", def: "1523000", productOnly: true },
+  { id: "in_closureAmount", key: "closureAmount", label: "Closure amount (₹)", type: "number", def: "1025000", hint: "Payoff on mother loan", productOnly: true },
+  { id: "in_owner", key: "owner", label: "Serial owner", type: "select", options: [["1", "1st owner"], ["2", "2nd owner"], ["3", "3rd owner"]], def: "1", productOnly: true },
+  { id: "in_age", key: "age", label: "Applicant age", type: "number", def: "38" },
+  { id: "in_employment", key: "employment", label: "Employment type", type: "select", options: [["salaried", "Salaried"], ["senp", "Self-employed"]], def: "salaried" },
+  { id: "in_foirMet", key: "foirMet", label: "FOIR met?", type: "select", options: [["yes", "Yes"], ["no", "No"]], def: "yes" },
+  { id: "in_abbMultiple", key: "abbMultiple", label: "Avg. bank balance (× EMI)", type: "number", step: "0.1", def: "1.5" },
+  { id: "in_resi", key: "resi", label: "Residence", type: "select", options: [["owned", "Owned"], ["rented", "Rented"]], def: "owned" },
+  { id: "in_itr", key: "itr", label: "ITR available?", type: "select", options: [["yes", "Yes"], ["no", "No"]], def: "yes" },
+  { id: "in_location", key: "location", label: "Location (city / state)", type: "text", hint: "Used to match lenders that cover this location", def: "" },
+];
+
+function fieldInputHTML(def) {
+  const hintHTML = def.hint ? `<span class="hint">${esc(def.hint)}</span>` : "";
+  if (def.type === "select") {
+    const opts = def.options.map(([val, label]) => `<option value="${val}" ${val === def.def ? "selected" : ""}>${label}</option>`).join("");
+    return `<div class="field"><label>${def.label}</label><select id="${def.id}">${opts}</select>${hintHTML}</div>`;
+  }
+  const stepAttr = def.step ? ` step="${def.step}"` : "";
+  return `<div class="field"><label>${def.label}</label><input type="${def.type}"${stepAttr} id="${def.id}" value="${esc(def.def)}">${hintHTML}</div>`;
+}
+
+// Whether the applicant already has a real value for this field (so it can be skipped).
+function isKnown(a, key) {
+  if (!a) return false;
+  const raw = {
+    cibil: a.cibil, age: a.age, employment: a.employment, foirMet: a.foirMet,
+    abbMultiple: a.abbMultiple, resi: a.resi, itr: a.itr, location: a.location,
+  }[key];
+  return raw !== null && raw !== undefined && raw !== "";
+}
+function knownValue(a, key) {
+  switch (key) {
+    case "cibil": return a.cibil;
+    case "age": return a.age;
+    case "employment": return a.employment || "salaried";
+    case "foirMet": return a.foirMet === false ? "no" : "yes";
+    case "abbMultiple": return a.abbMultiple;
+    case "resi": return a.resi || "owned";
+    case "itr": return a.itr ? "yes" : "no";
+    case "location": return a.location || "";
+    default: return undefined;
+  }
+}
+
+function applicantSummaryHTML(a) {
+  const chips = [
+    isKnown(a, "cibil") ? `CIBIL ${a.cibil}` : null,
+    isKnown(a, "age") ? `Age ${a.age}` : null,
+    a.employment === "senp" ? "Self-employed" : "Salaried",
+    `FOIR met: ${a.foirMet === false ? "No" : "Yes"}`,
+    isKnown(a, "abbMultiple") ? `ABB ${a.abbMultiple}× EMI` : null,
+    a.resi === "rented" ? "Rented" : "Owned",
+    `ITR: ${a.itr ? "Yes" : "No"}`,
+    isKnown(a, "location") ? `📍 ${a.location}` : null,
+  ].filter(Boolean);
+
+  return `<div class="applicant-banner">
+      <div class="ab-main">Using saved info for <b>${esc(a.name || "this applicant")}</b> · PAN ${esc(a.pan || "—")}</div>
+      <a href="/?applicantId=${encodeURIComponent(a.id)}">Edit applicant info</a>
+    </div>
+    <div class="ab-chips">${chips.map((c) => `<span class="ab-chip">${esc(c)}</span>`).join("")}</div>
+    <div style="margin:2px 0 16px;">
+      <a href="#" onclick="FORCE_FULL_FORM=true;renderCalcForm();return false;" style="font-size:11.5px;font-weight:700;color:var(--primary);text-decoration:none;">Enter all details manually instead →</a>
+    </div>`;
+}
+
+let FORCE_FULL_FORM = false;
+
+function renderCalcForm() {
+  const summaryEl = document.getElementById("calcApplicantSummary");
+  const fieldsEl = document.getElementById("calcFormFields");
+  const useCompact = !!APPLICANT && !FORCE_FULL_FORM;
+
+  if (useCompact) {
+    summaryEl.innerHTML = applicantSummaryHTML(APPLICANT);
+  } else if (APPLICANT) {
+    summaryEl.innerHTML = `<div class="status-banner info">Entering details manually for this check. <a href="#" onclick="FORCE_FULL_FORM=false;renderCalcForm();return false;" style="color:inherit;font-weight:700;">↩ Use saved applicant info instead</a></div>`;
+  } else {
+    summaryEl.innerHTML = "";
+  }
+
+  const toRender = FIELD_DEFS.filter((def) => {
+    if (!useCompact) return true;
+    if (def.productOnly) return true;
+    return !isKnown(APPLICANT, def.key);
+  });
+  fieldsEl.innerHTML = toRender.map(fieldInputHTML).join("");
+}
+
+// value for a field: from the visible input if it's rendered, else from the known applicant value
+function v(id, key) {
+  const el = document.getElementById(id);
+  if (el) return el.value;
+  if (APPLICANT) { const kv = knownValue(APPLICANT, key); return kv === undefined || kv === null ? "" : kv; }
+  return "";
+}
+
 // ---------------- eligibility check ----------------
 async function runCheck() {
-  const v = (id) => document.getElementById(id).value;
-  const input = {
-    cibil: v("in_cibil"),
-    tenorServed: v("in_tenorServed"),
-    currentEMI: v("in_currentEMI"),
-    valuation: v("in_valuation"),
-    closureAmount: v("in_closureAmount"),
-    owner: v("in_owner"),
-    age: v("in_age"),
-    employment: v("in_employment"),
-    foirMet: v("in_foirMet"),
-    abbMultiple: v("in_abbMultiple"),
-    resi: v("in_resi"),
-    itr: v("in_itr"),
-  };
+  const input = {};
+  FIELD_DEFS.forEach((def) => { input[def.key] = v(def.id, def.key); });
 
   showStatus("calcStatus", "");
   try {
@@ -93,9 +193,12 @@ function renderResults(eligible, ineligible) {
       html += `<div class="result-card ${i === 0 ? "best" : ""}">
         ${i === 0 ? '<div class="badge-best">★ Best offer</div>' : ""}
         <div class="rc-top">
-          <div>
-            <p class="rc-name">${esc(r.lenderName)}</p>
-            <div class="rc-meta">${r.multiplier}× multiplier · ${r.irrRate}% IRR · ${r.pf}% PF</div>
+          <div class="lender-name-row">
+            ${logoHTML({ name: r.lenderName, logoUrl: r.logoUrl }, "sm")}
+            <div>
+              <p class="rc-name">${esc(r.lenderName)}</p>
+              <div class="rc-meta">${r.multiplier}× multiplier · ${r.irrRate}% IRR · ${r.pf}% PF</div>
+            </div>
           </div>
           <div class="rc-icon-ok">✓</div>
         </div>
@@ -153,13 +256,24 @@ function lenderCardHTML(l) {
   return `
   <div class="lender-row" id="lender_${l.id}">
     <button class="lender-head" onclick="toggleLender('${l.id}')">
-      <div>
-        <div class="ln">${esc(l.name)}</div>
-        <div class="lm" id="lendermeta_${l.id}">${l.calcBasis === "emi" ? "EMI-based" : "Valuation-based"} · ${l.tiers.length} tier${l.tiers.length !== 1 ? "s" : ""}</div>
+      <div class="lender-name-row">
+        <span id="logowrap_${l.id}">${logoHTML(l, "sm")}</span>
+        <div>
+          <div class="ln">${esc(l.name)}</div>
+          <div class="lm" id="lendermeta_${l.id}">${l.calcBasis === "emi" ? "EMI-based" : "Valuation-based"} · ${l.tiers.length} tier${l.tiers.length !== 1 ? "s" : ""}</div>
+        </div>
       </div>
       <div class="chev">▾</div>
     </button>
     <div class="lender-edit">
+      <div class="logo-upload-row">
+        <span id="logopreview_${l.id}">${logoHTML(l, "lg")}</span>
+        <div class="logo-upload-actions">
+          <input type="file" accept="image/*" id="logofile_${l.id}" style="display:none;" onchange="onLogoFile('${l.id}',this)">
+          <button class="logo-upload-btn" onclick="document.getElementById('logofile_${l.id}').click()">📷 Upload logo</button>
+          ${l.logoUrl ? `<button class="logo-remove-btn" onclick="removeLogo('${l.id}')">Remove logo</button>` : ""}
+        </div>
+      </div>
       <div class="field" style="margin-bottom:10px;">
         <label>Lender name</label>
         <input type="text" value="${esc(l.name)}" oninput="onLenderField('${l.id}','name',this.value,'text')">
@@ -210,9 +324,23 @@ function lenderCardHTML(l) {
         <input type="text" value="${esc(l.notes || "")}" oninput="onLenderField('${l.id}','notes',this.value,'text')">
       </div>
 
+      <div class="section-sub" style="margin-top:14px;">Location coverage</div>
+      <div class="field">
+        <label>Serviceable locations (comma-separated)</label>
+        <input type="text" value="${esc((l.serviceableLocations || []).join(", "))}" placeholder="Blank = serves everywhere" oninput="onLocationsInput('${l.id}',this.value)">
+        <span class="hint">If set, applicants outside these locations will show as ineligible for this lender</span>
+      </div>
+
       <button class="delete-lender" onclick="removeLender('${l.id}')">🗑 Delete lender</button>
     </div>
   </div>`;
+}
+
+function onLocationsInput(id, rawVal) {
+  const l = findLender(id);
+  if (!l) return;
+  l.serviceableLocations = rawVal.split(",").map((s) => s.trim()).filter(Boolean);
+  scheduleSave(id);
 }
 
 function renderLendersList() {
@@ -259,8 +387,51 @@ function onLenderField(id, field, rawVal, kind) {
     if (field === "name") {
       const headEl = document.querySelector("#lender_" + id + " .ln");
       if (headEl) headEl.textContent = l.name;
+      if (!l.logoUrl) {
+        const wrap = document.getElementById("logowrap_" + id);
+        if (wrap) wrap.innerHTML = logoHTML(l, "sm");
+        const preview = document.getElementById("logopreview_" + id);
+        if (preview) preview.innerHTML = logoHTML(l, "lg");
+      }
     }
   }
+  scheduleSave(id);
+}
+
+function onLogoFile(id, input) {
+  const l = findLender(id);
+  const file = input.files && input.files[0];
+  if (!l || !file) return;
+  if (file.size > 800 * 1024) {
+    showStatus("lendersStatus", "Logo is too large — please use an image under 800KB.", "error");
+    input.value = "";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    l.logoUrl = reader.result;
+    const wrap = document.getElementById("logowrap_" + id);
+    if (wrap) wrap.innerHTML = logoHTML(l, "sm");
+    const preview = document.getElementById("logopreview_" + id);
+    if (preview) preview.innerHTML = logoHTML(l, "lg");
+    // re-render so the "Remove logo" link appears
+    const row = document.getElementById("lender_" + id);
+    const wasOpen = row && row.classList.contains("open");
+    row.outerHTML = lenderCardHTML(l);
+    if (wasOpen) document.getElementById("lender_" + id).classList.add("open");
+    scheduleSave(id);
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo(id) {
+  const l = findLender(id);
+  if (!l) return;
+  l.logoUrl = "";
+  const row = document.getElementById("lender_" + id);
+  const wasOpen = row && row.classList.contains("open");
+  row.outerHTML = lenderCardHTML(l);
+  if (wasOpen) document.getElementById("lender_" + id).classList.add("open");
   scheduleSave(id);
 }
 
@@ -372,5 +543,20 @@ async function clearHistory() {
   }
 }
 
+// ---------------- applicant prefill ----------------
+const APPLICANT_ID = new URLSearchParams(location.search).get("applicantId");
+let APPLICANT = null;
+
+async function loadApplicantPrefill() {
+  if (!APPLICANT_ID) { renderCalcForm(); return; }
+  try {
+    APPLICANT = await api("/api/applicants/" + encodeURIComponent(APPLICANT_ID));
+  } catch (err) {
+    showStatus("calcStatus", "Couldn't load applicant: " + err.message, "error");
+  }
+  renderCalcForm();
+}
+
 // ---------------- init ----------------
 loadLenders();
+loadApplicantPrefill();
