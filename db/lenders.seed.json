@@ -46,7 +46,8 @@
     "notes": "Not available for 3rd owner onward.",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "hero-emi",
@@ -89,7 +90,8 @@
     "notes": "Nil bounce in last 6 months, max 1 in 12 months.",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "hero-star",
@@ -120,7 +122,8 @@
     "notes": "Top-up capped at 2x current EMI (enforced).",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": 2
+    "maxTopupMultipleOfEMI": 2,
+    "serviceableLocations": []
   },
   {
     "id": "axis-nip",
@@ -151,7 +154,8 @@
     "notes": "Only 1st owner accepted.",
     "category": "bt",
     "maxTopupCap": 5000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "axis-ip-foir-met",
@@ -182,7 +186,8 @@
     "notes": "Only 1st owner accepted.",
     "category": "bt",
     "maxTopupCap": 5000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "axis-ip-foir-not-met",
@@ -213,7 +218,8 @@
     "notes": "Fallback path when FOIR isn't met - needs a stronger average bank balance instead.",
     "category": "bt",
     "maxTopupCap": 5000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "axis-ml-foir-met",
@@ -244,7 +250,8 @@
     "notes": "",
     "category": "bt",
     "maxTopupCap": 5000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "axis-ml-no-foir",
@@ -275,7 +282,8 @@
     "notes": "",
     "category": "bt",
     "maxTopupCap": 5000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "au-sfb",
@@ -306,7 +314,8 @@
     "notes": "Hard cap of Rs 20,00,000 regardless of formula.",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "idfc-platinum",
@@ -343,7 +352,8 @@
     "notes": "CIBIL 765+ tier.",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "idfc-gold",
@@ -380,7 +390,8 @@
     "notes": "CIBIL 725-764 tier.",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "idfc-silver",
@@ -417,7 +428,8 @@
     "notes": "CIBIL 700-724 tier.",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "hdfc-emi",
@@ -466,7 +478,8 @@
     "notes": "Only 1st owner accepted.",
     "category": "bt",
     "maxTopupCap": 3500000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "hdfc-under-15l",
@@ -503,7 +516,8 @@
     "notes": "Multiplier runs ~20% lower if residence isn't owned.",
     "category": "bt",
     "maxTopupCap": 1000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "piramal",
@@ -540,7 +554,8 @@
     "notes": "",
     "category": "bt",
     "maxTopupCap": 0,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "icici",
@@ -583,7 +598,8 @@
     "notes": "",
     "category": "bt",
     "maxTopupCap": 3000000,
-    "maxTopupMultipleOfEMI": null
+    "maxTopupMultipleOfEMI": null,
+    "serviceableLocations": []
   },
   {
     "id": "icici-max-refinance",
@@ -615,7 +631,8 @@
     "pf": 1,
     "maxTopupCap": 0,
     "maxTopupMultipleOfEMI": null,
-    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 140% of valuation. One-time facility. Cloned from ICICI Bank BT policy."
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 140% of valuation. One-time facility. Cloned from ICICI Bank BT policy.",
+    "serviceableLocations": []
   },
   {
     "id": "axis-max-refinance",
@@ -647,7 +664,8 @@
     "pf": 1,
     "maxTopupCap": 0,
     "maxTopupMultipleOfEMI": null,
-    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 120% of valuation. One-time facility. Cloned from Axis Finance IP (FOIR Met) BT policy."
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 120% of valuation. One-time facility. Cloned from Axis Finance IP (FOIR Met) BT policy.",
+    "serviceableLocations": []
   },
   {
     "id": "piramal-max-refinance",
@@ -679,7 +697,8 @@
     "pf": 1,
     "maxTopupCap": 0,
     "maxTopupMultipleOfEMI": null,
-    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 150% of valuation. 1st owner only. One-time facility. Cloned from Piramal Finance BT policy."
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 150% of valuation. 1st owner only. One-time facility. Cloned from Piramal Finance BT policy.",
+    "serviceableLocations": []
   },
   {
     "id": "hero-max",
@@ -711,7 +730,8 @@
     "pf": 1,
     "maxTopupCap": 0,
     "maxTopupMultipleOfEMI": null,
-    "notes": "Refinance of a fully-owned (loan-closed) vehicle. Sheet lists 150-200% of valuation; using the 175% midpoint. One-time facility. Cloned from Hero FinCorp (EMI Multiplier) BT policy."
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle. Sheet lists 150-200% of valuation; using the 175% midpoint. One-time facility. Cloned from Hero FinCorp (EMI Multiplier) BT policy.",
+    "serviceableLocations": []
   },
   {
     "id": "tata-max-refinance",
@@ -743,6 +763,7 @@
     "pf": 1,
     "maxTopupCap": 0,
     "maxTopupMultipleOfEMI": null,
-    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 150% of valuation. One-time facility. Cloned from Tata Capital BT policy."
+    "notes": "Refinance of a fully-owned (loan-closed) vehicle at 150% of valuation. One-time facility. Cloned from Tata Capital BT policy.",
+    "serviceableLocations": []
   }
 ]
